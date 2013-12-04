@@ -1,8 +1,9 @@
 package mware_lib;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public interface RemoteCall {
-	public abstract Serializable callMethod(String methodName, Serializable[] params);
+	public Serializable callMethod(String methodName, ArrayList<Object> params);
 
 }

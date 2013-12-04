@@ -1,16 +1,13 @@
 package bank_access;
 
-import java.io.Serializable;
+import mware_lib.RemoteReference;
 
 public class ManagerStub extends ManagerImplBase {
 
-	String host, name;
-	int port;
+	RemoteReference ref;
 	
-	public ManagerStub(String host, int port, String name){
-		this.host = host;
-		this.port = port;
-		this.name = name;
+	public ManagerStub(RemoteReference ref){
+		this.ref = ref;
 	}
 	
 	@Override
@@ -18,13 +15,4 @@ public class ManagerStub extends ManagerImplBase {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public Serializable callMethod(String methodName, Serializable[] params) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	
-
 }

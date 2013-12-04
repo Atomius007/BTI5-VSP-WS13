@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 public class CommClient implements RemoteCall{
 	
@@ -20,24 +21,15 @@ public class CommClient implements RemoteCall{
 		in = new ObjectInputStream(mySocket.getInputStream());
 	}
 
-	@Override
-	public Serializable callMethod(String methodName, Serializable[] params){
-		RemoteMessage invMsg = null;
-		RemoteMessage rplMsg = null;
-		
-		invMsg = new InvocationMessage(methodName, params);
-		send(invMsg);
-		rplMsg = receive();
-		
-		return rplMsg;
-	}
-	
 	public RemoteMessage receive() {
         Object rcvObj = null;
 		try {
 			rcvObj = in.readObject();
 	        if (!(rcvObj instanceof RemoteMessage)) {
 	            
+	        }
+	        if (!(rcvObj instanceof RemoteMessage)){
+	        	
 	        }
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -69,6 +61,15 @@ public class CommClient implements RemoteCall{
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public Serializable callMethod(String methodName, ArrayList<Object> params) {
+		RemoteMessage invMsg = new InvocationMessage(methodName, params);
+		RemoteMessage retMsg;
+		send(invMsg);
+		retMsg = receive();
+		return retMsg;
 	}
 
 

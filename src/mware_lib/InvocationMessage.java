@@ -1,6 +1,6 @@
 package mware_lib;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 
 public class InvocationMessage implements RemoteMessage {
 
@@ -9,9 +9,9 @@ public class InvocationMessage implements RemoteMessage {
 	 */
 	private static final long serialVersionUID = -1006893139011669392L;
 	private String methodName;
-	private Object[] params;
+	private ArrayList<Object> params;
 	
-	public InvocationMessage(String methodName, Serializable[] params){
+	public InvocationMessage(String methodName, ArrayList<Object> params){
 		this.setMethodName(methodName);
 		this.setParams(params);
 	}
@@ -24,11 +24,11 @@ public class InvocationMessage implements RemoteMessage {
 		this.methodName = methodName;
 	}
 
-	public Object[] getParams() {
+	public ArrayList<Object> getParams() {
 		return params;
 	}
 
-	public void setParams(Object[] params) {
+	public void setParams(ArrayList<Object> params) {
 		this.params = params;
 	}
 
