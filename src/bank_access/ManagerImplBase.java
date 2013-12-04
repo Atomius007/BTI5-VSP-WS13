@@ -15,8 +15,14 @@ public abstract class ManagerImplBase implements RemoteCall {
 	
 	@Override
 	public Serializable callMethod(String methodName, ArrayList<Object> params){
-		return params;
-		
+		Object resu = null;
+		if(methodName.equals("createAccount")){
+			resu = createAccount((String) params.get(0), (String) params.get(1));
+		} else {
+			//TODO Insert a new Exception Type
+			resu = new Exception("Illegal Method");
+		}
+		return (Serializable) resu;
 	}
 	
 	

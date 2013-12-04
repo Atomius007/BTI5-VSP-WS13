@@ -18,10 +18,22 @@ public abstract class AccountImplBase implements RemoteCall {
 	
 	@Override
 	public Serializable callMethod(String methodName, ArrayList<Object> params){
+		Object resu = null;
 		if(methodName.equals("transfer")){
-			
+			try {
+				transfer((double)params.get(0));
+				resu = null;
+			} catch (OverdraftException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				resu = e;
+			}
+		}else if(methodName.equals("getBalance")){
+			resu = getBalance();
+		}else{
+			//TODO Insert a new Exception Type
+			resu = new Exception("Illegal Method");
 		}
-		return params;
-		
+		return (Serializable) resu;
 	}
 }

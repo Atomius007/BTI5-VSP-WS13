@@ -5,9 +5,15 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
 
+import mware_lib.networking.CommClient;
+
 public class OBNS extends NameService {
 	
 	private CommClient client;
+	private int incomingPort;
+	private int listenPort;
+	private Thread tp;
+	
 	
 	public OBNS(String serviceHost, int listenPort) throws UnknownHostException, IOException{
 		this.client = new CommClient(serviceHost, listenPort);

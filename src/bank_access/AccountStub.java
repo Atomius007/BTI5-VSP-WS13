@@ -3,9 +3,8 @@ package bank_access;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import mware_lib.CommClient;
-import mware_lib.RemoteMessage;
 import mware_lib.RemoteReference;
+import mware_lib.networking.CommClient;
 
 public class AccountStub extends AccountImplBase {
 

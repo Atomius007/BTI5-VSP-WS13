@@ -5,15 +5,15 @@ import java.io.Serializable;
 public class RemoteReference implements Serializable {
 
 	private static final long serialVersionUID = 903035577709764592L;
-    private String host, name;
+    private String host;
     private int port;
-    
+    private Class<?> type;
     
    
-    public RemoteReference(String host, int port, String name) {
+    public RemoteReference(String host, int port, Class<?extends Object> type) {
         this.host = host;
         this.port = port;
-        this.name = name;
+        this.type = type;
     }
 
     public String getHost() {
@@ -24,13 +24,13 @@ public class RemoteReference implements Serializable {
         return port;
     }
 
-    public String getName() {
-        return name;
+    public Class<? extends Object> getType() {
+        return type;
     }
 
     @Override
     public String toString() {
-        return String.format("RemoteReference ['%s:%d', %s]", host, port, name);
+        return String.format("RemoteReference ['%s:%d', %s]", host, port, type);
     }
 
 }
