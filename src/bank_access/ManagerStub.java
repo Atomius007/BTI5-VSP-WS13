@@ -1,10 +1,8 @@
 package bank_access;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import mware_lib.NameServiceReference;
-import mware_lib.networking.CommClient;
+import mware_lib.RemoteCaller;
+import mware_lib.RemoteServiceReference;
 
 public class ManagerStub extends ManagerImplBase {
 
@@ -16,18 +14,9 @@ public class ManagerStub extends ManagerImplBase {
 	
 	@Override
 	public String createAccount(String owner, String branch) {
-		ArrayList<Object> params = new ArrayList<Object>();
-		params.add((Object)owner);
-		params.add((Object)branch);
+		
 		Object resu = null;
-		try {
-			System.out.println("Ref:" + ref);
-			CommClient client = new CommClient(ref.getHost(), ref.getPort());
-			resu = client.callMethod("createAccount", params);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-		}
+		resu = RemoteCaller.callMethod(ref, new RemoteServiceReference(ref.getname(), "createAccount", owner, branch));
 		return (String)resu;
 	}
 }

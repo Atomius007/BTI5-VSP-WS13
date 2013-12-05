@@ -10,7 +10,6 @@ import java.util.ArrayList;
 
 import mware_lib.RemoteCall;
 import mware_lib.messages.InvocationMessage;
-import mware_lib.messages.RemoteMessage;
 
 public class CommClient implements RemoteCall{
 	

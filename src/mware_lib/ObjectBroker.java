@@ -1,8 +1,6 @@
 package mware_lib;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
-
 public class ObjectBroker { // - Front-End der Middleware -
 	
 	private ObjectBroker(String serviceHost, int listenPort) {

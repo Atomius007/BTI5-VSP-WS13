@@ -1,12 +1,8 @@
 package bank_access;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import mware_lib.NameServiceReference;
 import mware_lib.RemoteCaller;
 import mware_lib.RemoteServiceReference;
-import mware_lib.networking.CommClient;
 
 public class AccountStub extends AccountImplBase {
 

@@ -1,9 +1,7 @@
 package name_service;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.ServerSocket;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;

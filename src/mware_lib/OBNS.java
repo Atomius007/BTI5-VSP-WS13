@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -103,7 +102,6 @@ public class OBNS extends NameService {
 			byte[] rawByteArray = (byte[])client.receive();
 			System.out.println("Client.receive: check");
 			 ByteArrayInputStream byteInStream = new ByteArrayInputStream(rawByteArray);
-             OutputStream os; 
 			 ObjectInputStream objInStream = new ObjectInputStream(byteInStream);
              try {
             	 target = (NameServiceReference)objInStream.readObject();
