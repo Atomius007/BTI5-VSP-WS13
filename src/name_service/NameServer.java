@@ -7,18 +7,20 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-public class NameServer implements Runnable{
+public class NameServer{
 
-	Map<String, Serializable> nameList;
+	Map<String, Serializable> nameList = new HashMap<String, Serializable>();
 	private ServerSocket srvSocket;
-	private Thread tp;
 	Lock mutex;
+	static int serverListenPort;
 	private volatile boolean running;
 	
 	public NameServer(int port) throws IOException{
-		nameList = Collections.synchronizedMap(new HashMap<String, Serializable>());
-		srvSocket = new ServerSocket(port);
+		mutex = new ReentrantLock(true);
+		System.out.println("init name server");
+		srvSocket = new ServerSocket(serverListenPort);
 		
 	}
 	
@@ -31,10 +33,10 @@ public class NameServer implements Runnable{
 			System.out.println("Please specify a port !");
 			System.exit(1);
 		}
-		int port = Integer.parseInt(args[0]);
-		System.out.println("Port: " + port);
+		serverListenPort = Integer.parseInt(args[0]);
+		System.out.println("Port: " + serverListenPort);
 		try {
-			NameServer ns = new NameServer(port);
+			NameServer ns = new NameServer(serverListenPort);
 			ns.listen();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -44,65 +46,69 @@ public class NameServer implements Runnable{
 	
 	public void listen(){
 		while(true){
-			NameServerWorker worker = null;
-
 			try {
-				worker = new NameServerWorker(getConnection(), nameList);
+				NameServerWorker worker = new NameServerWorker(getConnection());
 				Thread workerThread = new Thread(worker);
 				workerThread.start();
 				System.out.println("Worker started!");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 
 			
 			
 		}
 	}
-	
-    public void start() {
-        if (!running) {
-            running = true;
-            tp.start();
-        }
+	   
+
+    private class NameServerWorker implements Runnable {
+        private NameServerConnection connection;
+        
+    	public NameServerWorker(NameServerConnection connection) {
+    		this.connection = connection;
+    	}
+   
+    	@Override
+    	public void run() {
+    		System.out.println("WorkerRun!");
+    		Object message = null;
+    		//message = connection.receive();
+    		//System.out.println("Received: " + message);
+    		//System.out.println("Running: " + running);
+    		while (true) {
+    			try {
+    				message = connection.receive();
+    			} catch (IOException e) {
+    				System.out.println("Received: " + message);
+    				//e.printStackTrace();
+    				break;
+    			}
+    			 System.out.println("received: " + message);
+    			if (message instanceof String) {
+    				// resolve
+    				Object o = nameList.get((String) message);
+    				System.out.println("Resolving " + message);
+    				if (o == null) {
+
+    				} else {
+    					//TODO
+    				}
+    				connection.send((String) o);
+    			} else {
+    				// rebind
+    				System.out.println("Binding " + message.toString());
+    				Object[] newRef = (Object[]) message;
+    				
+    				nameList.put((String) newRef[0], newRef);
+    			}
+
+    		}
+
+    	}
+
     }
 
-    public void stop() {
-        running = false;
-        try {
-            srvSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void join() {
-        try {
-            tp.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void run() {
-    	System.out.println("Running!");
-
-        while (running) {
-            try {
-                // accept client and start worker
-            	System.out.println("Starting Worker!");
-                NameServerWorker worker = new NameServerWorker(getConnection(), nameList);
-                worker.start();
-
-            } catch (IOException e) { // getConnection()
-                //logger.logErr("Accepting client failed: " + e.getMessage());
-                 e.printStackTrace();
-            }
-        }
-
-    }
 
 
 }

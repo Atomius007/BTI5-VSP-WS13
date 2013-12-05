@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import mware_lib.RemoteCall;
-import mware_lib.RemoteReference;
+import mware_lib.NameServiceReference;
 
 public abstract class AccountImplBase implements RemoteCall {
 	public abstract void transfer(double amount) throws OverdraftException;
@@ -13,7 +13,7 @@ public abstract class AccountImplBase implements RemoteCall {
 
 	public static AccountImplBase narrowCast(Object rawObjectRef) {
 		
-		return new AccountStub((RemoteReference)rawObjectRef);
+		return new AccountStub((NameServiceReference)rawObjectRef);
 	}
 	
 	@Override

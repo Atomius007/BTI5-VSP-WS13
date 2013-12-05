@@ -3,7 +3,6 @@ package name_service;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.net.Socket;
 
 public class NameServerConnection {
@@ -23,24 +22,25 @@ public class NameServerConnection {
 		}
 	}
 	
-	public Serializable receive() {
+	public Object receive() throws IOException {
         Object rcvObj = null;
 		try {
 			rcvObj = in.readObject();
+			//in.close();
+			//clientSocket.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        return (Serializable) rcvObj;
+		} 
+        return (Object) rcvObj;
 	}
 
-	public void send(Serializable message){
+	public void send(Object message){
 		try {
 			out.writeObject(message);
 			out.flush();
+			//out.close();
+			//clientSocket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

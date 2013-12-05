@@ -3,14 +3,14 @@ package bank_access;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import mware_lib.RemoteReference;
+import mware_lib.NameServiceReference;
 import mware_lib.networking.CommClient;
 
 public class AccountStub extends AccountImplBase {
 
-	RemoteReference ref;
+	NameServiceReference ref;
 	
-	AccountStub(RemoteReference ref){
+	AccountStub(NameServiceReference ref){
 		this.ref = ref;
 	}
 	@Override

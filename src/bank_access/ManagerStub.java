@@ -3,14 +3,14 @@ package bank_access;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import mware_lib.RemoteReference;
+import mware_lib.NameServiceReference;
 import mware_lib.networking.CommClient;
 
 public class ManagerStub extends ManagerImplBase {
 
-	RemoteReference ref;
+	NameServiceReference ref;
 	
-	public ManagerStub(RemoteReference ref){
+	public ManagerStub(NameServiceReference ref){
 		this.ref = ref;
 	}
 	
@@ -26,7 +26,7 @@ public class ManagerStub extends ManagerImplBase {
 			resu = client.callMethod("createAccount", params);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return (String)resu;
 	}

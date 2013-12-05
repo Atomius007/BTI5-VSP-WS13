@@ -9,7 +9,7 @@ public abstract class ManagerImplBase implements RemoteCall {
 	public abstract String createAccount(String owner, String branch);
 
 	public static ManagerImplBase narrowCast(Object rawObjectRef) {
-		ManagerStub stub = new ManagerStub((RemoteReference)rawObjectRef); 
+		ManagerStub stub = new ManagerStub((NameServiceReference)rawObjectRef); 
 		return stub;
 		}
 	

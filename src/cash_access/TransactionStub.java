@@ -3,13 +3,13 @@ package cash_access;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import mware_lib.RemoteReference;
+import mware_lib.NameServiceReference;
 import mware_lib.networking.CommClient;
 
 public class TransactionStub extends TransactionImplBase {
-	RemoteReference ref;
+	NameServiceReference ref;
 	
-	TransactionStub(RemoteReference ref){
+	TransactionStub(NameServiceReference ref){
 		this.ref = ref;
 	}
 	@Override
