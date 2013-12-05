@@ -7,13 +7,13 @@ public class RemoteReference implements Serializable {
 	private static final long serialVersionUID = 903035577709764592L;
     private String host;
     private int port;
-    private Class<?> type;
+    private String name;
     
    
-    public RemoteReference(String host, int port, Class<?extends Object> type) {
+    public RemoteReference(String host, int port, String name) {
         this.host = host;
         this.port = port;
-        this.type = type;
+        this.name = name;
     }
 
     public String getHost() {
@@ -24,13 +24,13 @@ public class RemoteReference implements Serializable {
         return port;
     }
 
-    public Class<? extends Object> getType() {
-        return type;
+    public String getname() {
+        return name;
     }
 
     @Override
     public String toString() {
-        return String.format("RemoteReference ['%s:%d', %s]", host, port, type);
+        return String.format("RemoteReference ['%s:%d', %s]", host, port, name);
     }
 
 }

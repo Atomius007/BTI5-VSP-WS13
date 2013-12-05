@@ -1,4 +1,4 @@
-package mware_lib.networking;
+package name_service;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -6,13 +6,13 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 
-public class CommConnection {
+public class NameServerConnection {
 	
     private Socket clientSocket;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	
-	public CommConnection(Socket socket){
+	public NameServerConnection(Socket socket){
 		this.clientSocket = socket;
 		try {
 			out = new ObjectOutputStream(clientSocket.getOutputStream());

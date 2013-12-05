@@ -25,27 +25,28 @@ public class CommClient implements RemoteCall{
 		in = new ObjectInputStream(mySocket.getInputStream());
 	}
 
-	public RemoteMessage receive() {
+	public Serializable receive() {
         Object rcvObj = null;
+        System.out.println("Trying to receive!");
+        System.out.println();
 		try {
 			rcvObj = in.readObject();
-	        if (!(rcvObj instanceof RemoteMessage)) {
-	            
-	        }
-	        if (!(rcvObj instanceof RemoteMessage)){
-	        	
-	        }
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println("ClassNotFound!");
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println("IOException!");
 		}
-        return (RemoteMessage) rcvObj;
+		System.out.println("Received: " + rcvObj);
+        return (Serializable) rcvObj;
 	}
 	
-	public void send(RemoteMessage message){
+	public void send(Serializable message){
+		System.out.println("Trying to send!");
 		try {
 			out.writeObject(message);
 			out.flush();
@@ -53,6 +54,7 @@ public class CommClient implements RemoteCall{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("Sent!");
 	}
 	
 	public void close(){
@@ -69,8 +71,9 @@ public class CommClient implements RemoteCall{
 
 	@Override
 	public Serializable callMethod(String methodName, ArrayList<Object> params) {
-		RemoteMessage invMsg = new InvocationMessage(methodName, params);
-		RemoteMessage retMsg;
+		System.out.println("CallMethod!");
+		Serializable invMsg = new InvocationMessage(methodName, params);
+		Serializable retMsg;
 		send(invMsg);
 		retMsg = receive();
 		return retMsg;

@@ -21,6 +21,7 @@ public class ManagerStub extends ManagerImplBase {
 		params.add((Object)branch);
 		Object resu = null;
 		try {
+			System.out.println("Ref:" + ref);
 			CommClient client = new CommClient(ref.getHost(), ref.getPort());
 			resu = client.callMethod("createAccount", params);
 		} catch (IOException e) {

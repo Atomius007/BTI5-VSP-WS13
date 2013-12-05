@@ -19,6 +19,7 @@ public class ObjectBroker { // - Front-End der Middleware -
 		 if (instance == null) {
 	        	instance = new ObjectBroker(serviceHost, listenPort);
 	        }
+		 System.out.println("Init ObjectBroker!");
 	        return instance;
 	}
 	// Das hier zurückgelieferte Objekt soll der zentrale Einstiegspunkt
@@ -26,8 +27,13 @@ public class ObjectBroker { // - Front-End der Middleware -
 	// Parameter: Host und Port, bei dem die Dienste (Namensdienst)
 	// kontaktiert werden sollen.
 	
-	public NameService getNameService() throws UnknownHostException, IOException {
-		nameService = new OBNS(serviceHost, listenPort);
+	public NameService getNameService() {
+		try {
+			nameService = new OBNS(serviceHost, listenPort);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return this.nameService;
 	}
 	// Liefert den Namensdienst (Stellvetreterobjekt).
