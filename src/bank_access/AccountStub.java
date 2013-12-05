@@ -17,7 +17,12 @@ public class AccountStub extends AccountImplBase {
 	}
 	@Override
 	public void transfer(double amount) throws OverdraftException {
-		ArrayList<Object> params = new ArrayList<Object>();
+		RemoteCaller.callMethod(ref, new RemoteServiceReference(ref.getname(), "transfer", amount));
+
+		
+		/* OLD CODE FIRST DRAFT
+		 ArrayList<Object> params = new ArrayList<Object>();
+		 
 		params.add((Object)amount);
 		try {
 			CommClient client = new CommClient(ref.getHost(), ref.getPort());
@@ -25,14 +30,14 @@ public class AccountStub extends AccountImplBase {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 
 	}
 
 	@Override
 	public double getBalance() {
 		Object resu = null;
-		resu = RemoteCaller.callMethod(ref, new RemoteServiceReference(ref.getname(), "getBalance");
+		resu = RemoteCaller.callMethod(ref, new RemoteServiceReference(ref.getname(), "getBalance"));
 		return (double)resu;
 	}
 
