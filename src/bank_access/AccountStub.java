@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import mware_lib.NameServiceReference;
+import mware_lib.RemoteCaller;
+import mware_lib.RemoteServiceReference;
 import mware_lib.networking.CommClient;
 
 public class AccountStub extends AccountImplBase {
@@ -30,14 +32,7 @@ public class AccountStub extends AccountImplBase {
 	@Override
 	public double getBalance() {
 		Object resu = null;
-		try {
-			CommClient client = new CommClient(ref.getHost(), ref.getPort());
-			resu = client.callMethod("getBalance", null);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// TODO Auto-generated method stub
+		resu = RemoteCaller.callMethod(ref, new RemoteServiceReference(ref.getname(), "getBalance");
 		return (double)resu;
 	}
 

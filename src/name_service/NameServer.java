@@ -11,11 +11,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class NameServer{
 
-	Map<String, Serializable> nameList = new HashMap<String, Serializable>();
+	Map<String, Object> nameList = new HashMap<String, Object>();
 	private ServerSocket srvSocket;
 	Lock mutex;
 	static int serverListenPort;
-	private volatile boolean running;
 	
 	public NameServer(int port) throws IOException{
 		mutex = new ReentrantLock(true);
@@ -53,7 +52,7 @@ public class NameServer{
 				System.out.println("Worker started!");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				//e.printStackTrace();
+				e.printStackTrace();
 			}
 
 			
@@ -71,12 +70,13 @@ public class NameServer{
    
     	@Override
     	public void run() {
-    		System.out.println("WorkerRun!");
-    		Object message = null;
+    		
     		//message = connection.receive();
     		//System.out.println("Received: " + message);
     		//System.out.println("Running: " + running);
     		while (true) {
+    			System.out.println("WorkerRun!");
+        		Object message = null;
     			try {
     				message = connection.receive();
     			} catch (IOException e) {
@@ -87,20 +87,25 @@ public class NameServer{
     			 System.out.println("received: " + message);
     			if (message instanceof String) {
     				// resolve
+    				mutex.lock();
     				Object o = nameList.get((String) message);
+    				mutex.unlock();
     				System.out.println("Resolving " + message);
     				if (o == null) {
 
     				} else {
     					//TODO
     				}
-    				connection.send((String) o);
+    				connection.send(o);
     			} else {
     				// rebind
+    				mutex.lock();
     				System.out.println("Binding " + message.toString());
     				Object[] newRef = (Object[]) message;
     				
-    				nameList.put((String) newRef[0], newRef);
+    				nameList.put((String) newRef[0], newRef[1]);
+    				mutex.unlock();
+    				System.out.println("Object zu Liste hinzugefügt " + message.toString());
     			}
 
     		}

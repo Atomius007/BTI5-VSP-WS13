@@ -17,6 +17,7 @@ public class TestZwo {
 		ManagerImplBase manager = ManagerImplBase.narrowCast(rawObjRef);
 		//liefert spezialisiertes Stellvertreterobjekt
 		manager.createAccount("Ich", "Neuer");
+		
 		objBroker.shutDown();
 
 	}

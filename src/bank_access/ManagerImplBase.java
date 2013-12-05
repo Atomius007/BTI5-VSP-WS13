@@ -10,7 +10,7 @@ public abstract class ManagerImplBase implements RemoteCall {
 
 	public static ManagerImplBase narrowCast(Object rawObjectRef) {
 		ManagerStub stub = new ManagerStub((NameServiceReference)rawObjectRef); 
-		return stub;
+			return stub;
 		}
 	
 	@Override

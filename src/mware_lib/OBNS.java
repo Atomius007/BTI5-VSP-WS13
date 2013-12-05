@@ -45,8 +45,7 @@ public class OBNS extends NameService {
 			Socket mySocket = new Socket(serviceHost, listenPort);
 			//this.incomingPort = socket.getLocalPort();
 			this.client = new CommConnection(mySocket);
-			nameref = new NameServiceReference(mySocket.getLocalAddress()
-					.toString().substring(1), socket.getLocalPort(), "");
+			nameref = new NameServiceReference(mySocket.getLocalAddress().toString().substring(1), socket.getLocalPort(), "");
 			LocalRequestService locReq = new LocalRequestService(socket);
 			lrs = locReq;
 			Thread t = new Thread(lrs);
@@ -61,20 +60,22 @@ public class OBNS extends NameService {
 	@Override
 	public void rebind(Object servant, String name) {
 		System.out.println("Trying to rebind!");
+		System.out.println("nameref: " + nameref);
+		nameref.setname(name);
+		
+		System.out.println("nameref: " + nameref);
 		byte[] recordRaw = null; 
         
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         ObjectOutput objOutput = null;
 		try {
-			Serializable[] ref = new Serializable[] {nameref.getHost(),nameref.getPort(), name };
-			objOutput = new ObjectOutputStream(outStream);
-			//((Serializable) ref);
-			objOutput.writeObject(ref);
+			objOutput = new ObjectOutputStream(outStream);			
+			objOutput.writeObject(nameref);
 			recordRaw = outStream.toByteArray();
+			System.out.println("recordRaw: " + recordRaw);
 			objOutput.close();
 			outStream.close();
-			//ObjectOutput objOutput = null;
-			//client.close();
+			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -84,32 +85,41 @@ public class OBNS extends NameService {
 		}
 		Object[] refs = new Object[]{name, recordRaw};
 		remObj.put(name, (RemoteCall)servant);
+		connMutex.lock();
+		System.out.println("Send: " + refs);
+		client.send(refs);
+		connMutex.unlock();
 	}
 
 	@Override
 	public Object resolve(String name) {
 		System.out.println("Trying to resolve!");
+		connMutex.lock();
 		client.send(name);
-		System.out.println("Sent!");
-		NameServiceReference nsf = null;
+		System.out.println("Sent Object Request!");
+		
+		NameServiceReference target = null;
 		try {
 			byte[] rawByteArray = (byte[])client.receive();
 			System.out.println("Client.receive: check");
 			 ByteArrayInputStream byteInStream = new ByteArrayInputStream(rawByteArray);
-             ObjectInputStream objInStream = new ObjectInputStream(byteInStream);
+             OutputStream os; 
+			 ObjectInputStream objInStream = new ObjectInputStream(byteInStream);
              try {
-            	 nsf = (NameServiceReference)objInStream.readObject();
-            	 System.out.println("Got: " + nsf);
+            	 target = (NameServiceReference)objInStream.readObject();
+            	 System.out.println("Got: " + target);
                  } catch (ClassNotFoundException e) {
                          System.out.println("Deserialisierungfehler");
                          e.printStackTrace();
                  }
 		} catch (IOException e) {
-			System.out.println("IOException: " + nsf);
+			System.out.println("IOException: " + target);
 			// e.printStackTrace();
-		}
-		System.out.println("Resolved: " + nsf);
-		return nsf;
+		}finally{
+			connMutex.unlock();
+			}
+		System.out.println("Resolved: " + target);
+		return target;
 
 		// TODO Auto-generated method stub
 	}
@@ -183,7 +193,7 @@ public class OBNS extends NameService {
 			}
 			remObj.get(rsr.getObjName());
 			RemoteCall rc = remObj.get(rsr.getObjName());
-			Object resu = rc.callMethod(rsr.getMethod(), rsr.getParams());
+			Serializable resu = rc.callMethod(rsr.getMethod(), rsr.getParams());
 			if (resu instanceof Exception) {
 				// TODO
 			}
