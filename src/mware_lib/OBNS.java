@@ -19,7 +19,7 @@ import mware_lib.networking.CommConnection;
 
 public class OBNS extends NameService {
 
-	public static int threadIDcnt=0;
+	public static int threadIDcnt = 0;
 	CommConnection client = null;
 	ArrayList<MethodRequestService> rrsList = new ArrayList<MethodRequestService>();
 	Thread tp;
@@ -35,15 +35,16 @@ public class OBNS extends NameService {
 
 	public OBNS(String serviceHost, int listenPort)
 			throws UnknownHostException, IOException {
-			this.NameServerAdress = serviceHost;
-			this.NameServerPort = listenPort;
+		this.NameServerAdress = serviceHost;
+		this.NameServerPort = listenPort;
 		try {
 			this.socket = new ServerSocket(0);
 			connMutex = new ReentrantLock(true);
 			Socket mySocket = new Socket(serviceHost, listenPort);
-			//this.incomingPort = socket.getLocalPort();
+			// this.incomingPort = socket.getLocalPort();
 			this.client = new CommConnection(mySocket);
-			nameref = new NameServiceReference(mySocket.getLocalAddress().toString().substring(1), socket.getLocalPort(), "");
+			nameref = new NameServiceReference(mySocket.getLocalAddress()
+					.toString().substring(1), socket.getLocalPort(), "");
 			ObjectRequestService locReq = new ObjectRequestService(socket);
 			lrs = locReq;
 			Thread t = new Thread(lrs);
@@ -59,20 +60,20 @@ public class OBNS extends NameService {
 	public void rebind(Object servant, String name) {
 		System.out.println("Trying to rebind!");
 		nameref.setname(name);
-		
+
 		System.out.println("nameref: " + nameref);
-		byte[] recordRaw = null; 
-        
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        ObjectOutput objOutput = null;
+		byte[] recordRaw = null;
+
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		ObjectOutput objOutput = null;
 		try {
-			objOutput = new ObjectOutputStream(outStream);			
+			objOutput = new ObjectOutputStream(outStream);
 			objOutput.writeObject(nameref);
 			recordRaw = outStream.toByteArray();
 			System.out.println("recordRaw: " + recordRaw);
 			objOutput.close();
 			outStream.close();
-			
+
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -81,9 +82,9 @@ public class OBNS extends NameService {
 			e.printStackTrace();
 		}
 		System.out.println("Cast to Object Array");
-		Object[] refs = new Object[]{name, recordRaw};
+		Object[] refs = new Object[] { name, recordRaw };
 		System.out.println("servant to RemoteCall");
-		remObj.put(name, (RemoteCall)servant);
+		remObj.put(name, (RemoteCall) servant);
 		connMutex.lock();
 		System.out.println("Send: " + refs);
 		client.send(refs);
@@ -96,26 +97,27 @@ public class OBNS extends NameService {
 		connMutex.lock();
 		client.send(name);
 		System.out.println("Sent Object Request!");
-		
+
 		NameServiceReference target = null;
 		try {
-			byte[] rawByteArray = (byte[])client.receive();
+			byte[] rawByteArray = (byte[]) client.receive();
 			System.out.println("Client.receive: check");
-			 ByteArrayInputStream byteInStream = new ByteArrayInputStream(rawByteArray);
-			 ObjectInputStream objInStream = new ObjectInputStream(byteInStream);
-             try {
-            	 target = (NameServiceReference)objInStream.readObject();
-            	 System.out.println("Got: " + target);
-                 } catch (ClassNotFoundException e) {
-                         System.out.println("Deserialisierungfehler");
-                         e.printStackTrace();
-                 }
+			ByteArrayInputStream byteInStream = new ByteArrayInputStream(
+					rawByteArray);
+			ObjectInputStream objInStream = new ObjectInputStream(byteInStream);
+			try {
+				target = (NameServiceReference) objInStream.readObject();
+				System.out.println("Got: " + target);
+			} catch (ClassNotFoundException e) {
+				System.out.println("Deserialisierungfehler");
+				e.printStackTrace();
+			}
 		} catch (IOException e) {
 			System.out.println("IOException: " + target);
 			// e.printStackTrace();
-		}finally{
+		} finally {
 			connMutex.unlock();
-			}
+		}
 		System.out.println("Resolved: " + target);
 		return target;
 
@@ -180,8 +182,7 @@ public class OBNS extends NameService {
 
 		@Override
 		public void run() {
-			System.out.println("RemoteRequestService(" + threadID
-					+ ") ready for RemoteCall");
+			System.out.println("RemoteRequestService(" + threadID + ") ready for RemoteCall");
 			RemoteServiceReference rsr = null;
 			try {
 				rsr = (RemoteServiceReference) conn.receive();
