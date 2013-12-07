@@ -1,0 +1,34 @@
+Account resolved.
+depo...
+--bal 41631.0
+--bal 41631.0
+--bal 41631.0
+--bal 41631.0
+--bal 41631.0
+--bal 41631.0
+--bal 41631.0
+--bal 41631.0
+--bal 41631.0
+--bal 41631.0
+...depo
+bal:41631.0
+check dep-np-1 ok
+*** check dep-np-2 FAILED
+check dep-np-3 ok
+check dep-val-1 ok
+*** check dep-val-2 FAILED
+check wit-np-1 ok
+*** check wit-np-2 FAILED
+check wit-np-3 ok
+check wit-val-1 ok
+*** check wit-val-2 FAILED
+*** bank003w - exception was expected
+*** branch003w - exception was expected
+
+Calling shutDown()...Done.
+Thread main running=true class:java.lang.Thread
+Thread Signal Dispatcher running=true class:java.lang.Thread
+Thread Reference Handler running=true class:java.lang.ref.Reference$ReferenceHandler
+Thread Finalizer running=true class:java.lang.ref.Finalizer$FinalizerThread
+Wait for termination...
+...FINISHED!
