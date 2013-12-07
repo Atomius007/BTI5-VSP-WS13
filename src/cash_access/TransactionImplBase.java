@@ -3,9 +3,9 @@ package cash_access;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import mware_lib.RemoteCall;
+import mware_lib.NameServiceReference;
 
-public abstract class TransactionImplBase implements RemoteCall{
+public abstract class TransactionImplBase implements TransactionSkel{
 	public abstract void deposit(String accountID, double amount)
 			throws InvalidParamException;
 
@@ -17,7 +17,7 @@ public abstract class TransactionImplBase implements RemoteCall{
 
 	public static TransactionImplBase narrowCast(Object rawObjectRef) {
 
-	TransactionImplBase resu = (TransactionStub) rawObjectRef;
+	TransactionImplBase resu = new TransactionStub((NameServiceReference) rawObjectRef);
 	return resu;
 	}
 	

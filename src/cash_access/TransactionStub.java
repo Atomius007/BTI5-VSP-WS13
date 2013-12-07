@@ -1,10 +1,8 @@
 package cash_access;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import mware_lib.NameServiceReference;
-import mware_lib.networking.CommClient;
+import mware_lib.RemoteCaller;
+import mware_lib.RemoteServiceReference;
 
 public class TransactionStub extends TransactionImplBase {
 	NameServiceReference ref;
@@ -15,47 +13,26 @@ public class TransactionStub extends TransactionImplBase {
 	@Override
 	public void deposit(String accountID, double amount)
 			throws InvalidParamException {
-		ArrayList<Object> params = new ArrayList<Object>();
-		params.add((Object)amount);
-		try {
-			CommClient client = new CommClient(ref.getHost(), ref.getPort());
-			client.callMethod("deposit", params);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+
+		System.out.println("deposit - STUB");
+		System.out.println("callMethod - STUB " +ref +" ");
+		RemoteCaller.callMethod(ref, new RemoteServiceReference(ref.getname(), "deposit", accountID, amount));		
 	}
 
 	@Override
 	public void withdraw(String accountID, double amount)
 			throws InvalidParamException, OverdraftException {
-		
-		ArrayList<Object> params = new ArrayList<Object>();
-		params.add((Object)amount);
-		try {
-			CommClient client = new CommClient(ref.getHost(), ref.getPort());
-			client.callMethod("withdraw", params);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		System.out.println("withdraw - STUB");
+		System.out.println("callMethod - STUB " +ref +" ");
+		RemoteCaller.callMethod(ref, new RemoteServiceReference(ref.getname(), "withdraw", accountID, amount));	
 	}
 
 	@Override
 	public double getBalance(String accountID) throws InvalidParamException {
-		Object resu;
-		ArrayList<Object> params = new ArrayList<Object>();
-		params.add((Object)accountID);
-		try {
-			CommClient client = new CommClient(ref.getHost(), ref.getPort());
-			resu = client.callMethod("getBalance", params);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			resu = 0;
-		}
+		System.out.println("getBalance - STUB");
+		System.out.println("callMethod - STUB " +ref +" ");
+		Object resu = null;
+		resu = RemoteCaller.callMethod(ref, new RemoteServiceReference(ref.getname(), "getBalance", accountID));
 		return (double)resu;
 	}
 	

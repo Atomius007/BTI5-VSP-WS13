@@ -1,5 +1,6 @@
 package bank_access;
 
+import mware_lib.Constants;
 import mware_lib.NameServiceReference;
 import mware_lib.RemoteCaller;
 import mware_lib.RemoteServiceReference;
@@ -7,6 +8,7 @@ import mware_lib.RemoteServiceReference;
 public class AccountStub extends AccountImplBase {
 
 	NameServiceReference ref;
+	boolean debug = Constants.getDebug();
 	
 	AccountStub(NameServiceReference ref){
 		this.ref = ref;
@@ -14,20 +16,6 @@ public class AccountStub extends AccountImplBase {
 	@Override
 	public void transfer(double amount) throws OverdraftException {
 		RemoteCaller.callMethod(ref, new RemoteServiceReference(ref.getname(), "transfer", amount));
-
-		
-		/* OLD CODE FIRST DRAFT
-		 ArrayList<Object> params = new ArrayList<Object>();
-		 
-		params.add((Object)amount);
-		try {
-			CommClient client = new CommClient(ref.getHost(), ref.getPort());
-			client.callMethod("transfer", params);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-
 	}
 
 	@Override

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -22,13 +21,13 @@ public class OBNS extends NameService {
 
 	public static int threadIDcnt=0;
 	CommConnection client = null;
-	ArrayList<RemoteRequestService> rrsList = new ArrayList<RemoteRequestService>();
+	ArrayList<MethodRequestService> rrsList = new ArrayList<MethodRequestService>();
 	Thread tp;
 	Lock connMutex;
-	boolean running;
+	boolean running = true;
 	private NameServiceReference nameref;
 	private ServerSocket socket;
-	private LocalRequestService lrs;
+	private ObjectRequestService lrs;
 	String NameServerAdress;
 	int NameServerPort;
 	ArrayList<Thread> threads = new ArrayList<Thread>();
@@ -45,7 +44,7 @@ public class OBNS extends NameService {
 			//this.incomingPort = socket.getLocalPort();
 			this.client = new CommConnection(mySocket);
 			nameref = new NameServiceReference(mySocket.getLocalAddress().toString().substring(1), socket.getLocalPort(), "");
-			LocalRequestService locReq = new LocalRequestService(socket);
+			ObjectRequestService locReq = new ObjectRequestService(socket);
 			lrs = locReq;
 			Thread t = new Thread(lrs);
 			tp = t;
@@ -59,7 +58,6 @@ public class OBNS extends NameService {
 	@Override
 	public void rebind(Object servant, String name) {
 		System.out.println("Trying to rebind!");
-		System.out.println("nameref: " + nameref);
 		nameref.setname(name);
 		
 		System.out.println("nameref: " + nameref);
@@ -82,7 +80,9 @@ public class OBNS extends NameService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("Cast to Object Array");
 		Object[] refs = new Object[]{name, recordRaw};
+		System.out.println("servant to RemoteCall");
 		remObj.put(name, (RemoteCall)servant);
 		connMutex.lock();
 		System.out.println("Send: " + refs);
@@ -122,11 +122,11 @@ public class OBNS extends NameService {
 		// TODO Auto-generated method stub
 	}
 
-	private class LocalRequestService implements Runnable {
+	private class ObjectRequestService implements Runnable {
 
 		ServerSocket mySocket;
 
-		public LocalRequestService(ServerSocket socket) {
+		public ObjectRequestService(ServerSocket socket) {
 			mySocket = socket;
 		}
 
@@ -137,7 +137,7 @@ public class OBNS extends NameService {
 					System.out.println("Waiting for Connection");
 					Socket s = mySocket.accept();
 					System.out.println("Connection established");
-					RemoteRequestService rrs = new RemoteRequestService(s);
+					MethodRequestService rrs = new MethodRequestService(s);
 					rrsList.add(rrs);
 					Thread t = new Thread(rrs);
 					threads.add(t);
@@ -168,12 +168,12 @@ public class OBNS extends NameService {
 
 	}
 
-	private class RemoteRequestService implements Runnable {
+	private class MethodRequestService implements Runnable {
 
 		int threadID;
 		CommConnection conn;
 
-		public RemoteRequestService(Socket socket) {
+		public MethodRequestService(Socket socket) {
 			conn = new CommConnection(socket);
 			threadID = threadIDcnt++;
 		}
@@ -191,9 +191,9 @@ public class OBNS extends NameService {
 			}
 			remObj.get(rsr.getObjName());
 			RemoteCall rc = remObj.get(rsr.getObjName());
-			Serializable resu = rc.callMethod(rsr.getMethod(), rsr.getParams());
+			Object resu = rc.callMethod(rsr.getMethod(), rsr.getParams());
 			if (resu instanceof Exception) {
-				// TODO
+				System.out.println("fehler bei aufruf von" + rsr.getMethod());
 			}
 			conn.send(resu);
 
@@ -227,7 +227,7 @@ public class OBNS extends NameService {
 			e.printStackTrace();
 		}
 		running = false;
-		for (RemoteRequestService o : rrsList) {
+		for (MethodRequestService o : rrsList) {
 			o.stop();
 		}
 

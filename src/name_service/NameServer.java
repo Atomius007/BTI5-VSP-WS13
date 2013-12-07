@@ -82,25 +82,26 @@ public class NameServer{
     				//e.printStackTrace();
     				break;
     			}
-    			 System.out.println("received: " + message);
+    			System.out.println("received: " + message);
     			if (message instanceof String) {
+    				System.out.println("Resolve");
     				// resolve
     				mutex.lock();
     				Object o = nameList.get((String) message);
     				mutex.unlock();
     				System.out.println("Resolving " + message);
     				if (o == null) {
-
+    					System.out.println("Not found");
     				} else {
-    					//TODO
+    					System.out.println("Found!");
     				}
     				connection.send(o);
     			} else {
+    				System.out.println("Rebind");
     				// rebind
     				mutex.lock();
     				System.out.println("Binding " + message.toString());
-    				Object[] newRef = (Object[]) message;
-    				
+    				Object[] newRef = (Object[]) message;    				
     				nameList.put((String) newRef[0], newRef[1]);
     				mutex.unlock();
     				System.out.println("Object zu Liste hinzugefügt " + message.toString());
