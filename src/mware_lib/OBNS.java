@@ -16,11 +16,14 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import mware_lib.networking.CommConnection;
+import mware_lib.references.NameServiceReference;
+import mware_lib.references.RemoteServiceReference;
 
 public class OBNS extends NameService {
 
-	public static int threadIDcnt = 0;
+	public static int threadCounter = 0;
 	CommConnection client = null;
+	//This is a List of Remote Services!
 	ArrayList<MethodRequestService> rrsList = new ArrayList<MethodRequestService>();
 	Thread tp;
 	Lock connMutex;
@@ -62,28 +65,28 @@ public class OBNS extends NameService {
 		nameref.setname(name);
 
 		System.out.println("nameref: " + nameref);
-		byte[] recordRaw = null;
-
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		
+		//Initializing ouputStream
 		ObjectOutput objOutput = null;
+		//problems mit normal Stream, switched to byte for workaround
+		byte[] receivedRef = null;
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		
 		try {
+			//create->write->close
 			objOutput = new ObjectOutputStream(outStream);
 			objOutput.writeObject(nameref);
-			recordRaw = outStream.toByteArray();
-			System.out.println("recordRaw: " + recordRaw);
+			receivedRef = outStream.toByteArray();
+			System.out.println("recordRaw: " + receivedRef);
 			objOutput.close();
 			outStream.close();
 
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Cast to Object Array");
-		Object[] refs = new Object[] { name, recordRaw };
-		System.out.println("servant to RemoteCall");
+		Object[] refs = new Object[] { name, receivedRef };
 		remObj.put(name, (RemoteCall) servant);
 		connMutex.lock();
 		System.out.println("Send: " + refs);
@@ -93,15 +96,18 @@ public class OBNS extends NameService {
 
 	@Override
 	public Object resolve(String name) {
-		System.out.println("Trying to resolve!");
+		
+		System.out.println("OBNS.resolve(" + name +")");
+		//Multiple Threads so we have to lock the communication interface
 		connMutex.lock();
+		//send command
 		client.send(name);
 		System.out.println("Sent Object Request!");
 
 		NameServiceReference target = null;
 		try {
+			//problem used with
 			byte[] rawByteArray = (byte[]) client.receive();
-			System.out.println("Client.receive: check");
 			ByteArrayInputStream byteInStream = new ByteArrayInputStream(
 					rawByteArray);
 			ObjectInputStream objInStream = new ObjectInputStream(byteInStream);
@@ -109,7 +115,7 @@ public class OBNS extends NameService {
 				target = (NameServiceReference) objInStream.readObject();
 				System.out.println("Got: " + target);
 			} catch (ClassNotFoundException e) {
-				System.out.println("Deserialisierungfehler");
+				System.out.println("Something went wrong while extracting class infos");
 				e.printStackTrace();
 			}
 		} catch (IOException e) {
@@ -120,12 +126,16 @@ public class OBNS extends NameService {
 		}
 		System.out.println("Resolved: " + target);
 		return target;
-
-		// TODO Auto-generated method stub
 	}
 
 	private class ObjectRequestService implements Runnable {
 
+		/** 
+	     * ListenerThread for Objects.
+	     *
+	     * @param args
+	     */
+		
 		ServerSocket mySocket;
 
 		public ObjectRequestService(ServerSocket socket) {
@@ -136,95 +146,81 @@ public class OBNS extends NameService {
 		public void run() {
 			while (running) {
 				try {
-					System.out.println("Waiting for Connection");
+					System.out.println("Waiting for Connection...");
 					Socket s = mySocket.accept();
-					System.out.println("Connection established");
+					System.out.println("Connection established!");
 					MethodRequestService rrs = new MethodRequestService(s);
 					rrsList.add(rrs);
 					Thread t = new Thread(rrs);
 					threads.add(t);
-					System.out.println("New Thread");
 					t.start();
 				} catch (IOException e) {
-
 				}
-				// TODO Auto-generated method stub
 			}
 		}
 
 		public void stop() {
 			running = false;
-
 			try {
 				mySocket.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 		}
-
-		/**
-		 * @param args
-		 */
-
 	}
 
 	private class MethodRequestService implements Runnable {
 
-		int threadID;
+		/**
+		 * Listener Thread for Methods.
+		 * Provides the RemoteCalls to the 
+		 * 
+		 * @param args
+		 */
+		
 		CommConnection conn;
 
 		public MethodRequestService(Socket socket) {
 			conn = new CommConnection(socket);
-			threadID = threadIDcnt++;
+			threadCounter++;
 		}
 
 		@Override
 		public void run() {
-			System.out.println("RemoteRequestService(" + threadID + ") ready for RemoteCall");
-			RemoteServiceReference rsr = null;
+			RemoteServiceReference remServRef = null;
 			try {
-				rsr = (RemoteServiceReference) conn.receive();
+				remServRef = (RemoteServiceReference) conn.receive();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			remObj.get(rsr.getObjName());
-			RemoteCall rc = remObj.get(rsr.getObjName());
-			Object resu = rc.callMethod(rsr.getMethod(), rsr.getParams());
+			remObj.get(remServRef.getObjectName());
+			RemoteCall rc = remObj.get(remServRef.getObjectName());
+			Object resu = rc.callMethod(remServRef.getMethodName(), remServRef.getArguments());
 			if (resu instanceof Exception) {
-				System.out.println("fehler bei aufruf von" + rsr.getMethod());
+				System.out.println("fehler bei aufruf von" + remServRef.getMethodName());
 			}
 			conn.send(resu);
-
-			while (!rsr.getParams().isEmpty()) {
-				System.out.println(rsr.getParams().remove(0));
+			while (!remServRef.getArguments().isEmpty()) {
+				System.out.println(remServRef.getArguments().remove(0));
 			}
 		}
 
 		public void stop() {
 			running = false;
-
 			try {
 				conn.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 		}
 	}
 
-	/**
-	 * @param args
-	 */
 	public void shutdown() {
 		lrs.stop();
 		try {
 			tp.join();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		running = false;
@@ -235,8 +231,7 @@ public class OBNS extends NameService {
 		for (Thread t : threads) {
 			try {
 				t.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+			} catch (InterruptedException e) { 
 				e.printStackTrace();
 			}
 		}

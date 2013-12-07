@@ -1,8 +1,7 @@
 package bank_access;
 
 import java.util.ArrayList;
-
-import mware_lib.*;
+import mware_lib.references.NameServiceReference;
 
 public abstract class AccountImplBase implements AccountSkel{
 	public abstract void transfer(double amount) throws OverdraftException;
@@ -20,11 +19,9 @@ public abstract class AccountImplBase implements AccountSkel{
              
              if(name.equals("transfer")){
                      try {
-                             transfer((double)params.get(0));
-                             return null;
-                     } catch (OverdraftException e) {
-                             e.printStackTrace();
-                             return e;
+                    	 transfer((double)params.get(0)); return null;
+                     } catch (OverdraftException e) { 
+                    	 e.printStackTrace(); return e;
                      }
              }else if(name.equals("getBalance")){
                      return getBalance();

@@ -2,7 +2,7 @@ package bank_access;
 
 import java.util.ArrayList;
 
-import mware_lib.*;
+import mware_lib.references.NameServiceReference;
 
 public abstract class ManagerImplBase implements ManagerSkel{
 	public abstract String createAccount(String owner, String branch);

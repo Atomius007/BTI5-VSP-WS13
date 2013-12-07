@@ -3,7 +3,7 @@ package cash_access;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import mware_lib.NameServiceReference;
+import mware_lib.references.NameServiceReference;
 
 public abstract class TransactionImplBase implements TransactionSkel{
 	public abstract void deposit(String accountID, double amount)

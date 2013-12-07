@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import mware_lib.networking.*;
+import mware_lib.references.NameServiceReference;
+import mware_lib.references.RemoteServiceReference;
 
 public class RemoteCaller {
 	

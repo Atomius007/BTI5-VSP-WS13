@@ -2,11 +2,14 @@ package bank_access;
 
 
 import mware_lib.*;
+import mware_lib.misc.Constants;
+import mware_lib.references.NameServiceReference;
+import mware_lib.references.RemoteServiceReference;
 
 public class ManagerStub extends ManagerImplBase {
 
 	NameServiceReference ref;
-	boolean debug = true;
+	boolean debug = Constants.getDebug();
 	
 	public ManagerStub(NameServiceReference ref){
 		this.ref = ref;

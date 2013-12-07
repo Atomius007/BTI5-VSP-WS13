@@ -17,7 +17,6 @@ public class NameServerConnection {
 			out = new ObjectOutputStream(clientSocket.getOutputStream());
 			in = new ObjectInputStream(clientSocket.getInputStream());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -26,10 +25,7 @@ public class NameServerConnection {
         Object rcvObj = null;
 		try {
 			rcvObj = in.readObject();
-			//in.close();
-			//clientSocket.close();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
         return (Object) rcvObj;
@@ -39,10 +35,7 @@ public class NameServerConnection {
 		try {
 			out.writeObject(message);
 			out.flush();
-			//out.close();
-			//clientSocket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
 	}

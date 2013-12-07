@@ -1,8 +1,8 @@
 package cash_access;
 
-import mware_lib.NameServiceReference;
 import mware_lib.RemoteCaller;
-import mware_lib.RemoteServiceReference;
+import mware_lib.references.NameServiceReference;
+import mware_lib.references.RemoteServiceReference;
 
 public class TransactionStub extends TransactionImplBase {
 	NameServiceReference ref;

@@ -29,7 +29,6 @@ public class ObjectBroker { // - Front-End der Middleware -
 		try {
 			nameService = new OBNS(serviceHost, listenPort);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return this.nameService;
@@ -37,7 +36,7 @@ public class ObjectBroker { // - Front-End der Middleware -
 	// Liefert den Namensdienst (Stellvetreterobjekt).
 	
 	public void shutDown() {
-	
+		this.nameService.shutdown();
 	}
 	// Beendet die Benutzung der Middleware in dieser Anwendung.
 }
