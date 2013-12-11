@@ -15,7 +15,10 @@ public class AccountStub extends AccountImplBase {
 	}
 	@Override
 	public void transfer(double amount) throws OverdraftException {
-		RemoteCaller.callMethod(ref, new RemoteServiceReference(ref.getname(), "transfer", amount));
+		Object resu = RemoteCaller.callMethod(ref, new RemoteServiceReference(ref.getname(), "transfer", amount));
+        if(resu instanceof OverdraftException){
+            throw (OverdraftException)resu;
+    }
 	}
 
 	@Override
