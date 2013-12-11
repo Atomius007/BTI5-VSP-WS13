@@ -28,9 +28,9 @@ public class OBNS extends NameService {
 	Thread tp;
 	Lock connMutex;
 	boolean running = true;
-	private NameServiceReference nameref;
-	private ServerSocket socket;
-	private ObjectRequestService lrs;
+	NameServiceReference nameref;
+	ServerSocket socket;
+	ObjectRequestService lrs;
 	String NameServerAdress;
 	int NameServerPort;
 	ArrayList<Thread> threads = new ArrayList<Thread>();
@@ -234,7 +234,7 @@ public class OBNS extends NameService {
 			o.stop();
 		}
 
-		System.out.println("Stopping Object Remote Service"); 
+		System.out.println("Joining Threads"); 
 		for (Thread thread : threads) {
 			try {
 				thread.join();
