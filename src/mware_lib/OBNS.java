@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
 import mware_lib.networking.CommConnection;
 import mware_lib.references.NameServiceReference;
 import mware_lib.references.RemoteServiceReference;
@@ -155,6 +154,11 @@ public class OBNS extends NameService {
 					threads.add(t);
 					t.start();
 				} catch (IOException e) {
+					if(running){
+						e.printStackTrace();
+					}else{
+						System.out.println("System Shutting Down");
+					}
 				}
 			}
 		}
@@ -191,7 +195,7 @@ public class OBNS extends NameService {
 			try {
 				remServRef = (RemoteServiceReference) conn.receive();
 			} catch (IOException e) {
-				e.printStackTrace();
+				if(running){e.printStackTrace();}else{System.out.println("System shutting down.");}
 			}
 			remObj.get(remServRef.getObjectName());
 			RemoteCall rc = remObj.get(remServRef.getObjectName());
@@ -242,6 +246,7 @@ public class OBNS extends NameService {
 				e.printStackTrace();
 			}
 		}
+		 System.out.println("All Threads closed.");
 	}
 
 }

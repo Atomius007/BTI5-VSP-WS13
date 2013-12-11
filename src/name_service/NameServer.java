@@ -17,7 +17,7 @@ public class NameServer {
 
 	public NameServer(int port) throws IOException {
 		mutex = new ReentrantLock(true);
-		System.out.println("init name server");
+		System.out.println("Initializing NameServer");
 		srvSocket = new ServerSocket(serverListenPort);
 
 	}

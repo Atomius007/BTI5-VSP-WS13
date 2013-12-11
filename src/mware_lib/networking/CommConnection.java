@@ -37,7 +37,7 @@ public class CommConnection {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        return (Object) rcvObj;
+        return rcvObj;
 	}
 
 	public void send(Object message){
