@@ -36,6 +36,7 @@ public class ObjectBroker { // - Front-End der Middleware -
 	// Liefert den Namensdienst (Stellvetreterobjekt).
 	
 	public void shutDown() {
+		System.out.println("Invoking Shutdown.");
 		this.nameService.shutdown();
 	}
 	// Beendet die Benutzung der Middleware in dieser Anwendung.

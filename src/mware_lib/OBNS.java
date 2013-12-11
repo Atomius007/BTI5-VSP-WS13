@@ -217,20 +217,27 @@ public class OBNS extends NameService {
 	}
 
 	public void shutdown() {
+		
+		System.out.println("Stopping Object Remote Service"); 
 		lrs.stop();
+		
+		System.out.println("Joining Service Thread"); 
 		try {
 			tp.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		running = false;
+		
+		System.out.println("Interating over MethodRequestService List"); 
 		for (MethodRequestService o : rrsList) {
 			o.stop();
 		}
 
-		for (Thread t : threads) {
+		System.out.println("Stopping Object Remote Service"); 
+		for (Thread thread : threads) {
 			try {
-				t.join();
+				thread.join();
 			} catch (InterruptedException e) { 
 				e.printStackTrace();
 			}
